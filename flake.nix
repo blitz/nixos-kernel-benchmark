@@ -7,17 +7,29 @@
   };
 
   outputs = { self, nixpkgs, flake-utils }:
-    flake-utils.lib.eachSystem [ "x86_64-linux" ] (system:
-      let
-        pkgs = nixpkgs.legacyPackages.${system};
-      in rec {
-        packages = let
-          buildKernel = pkgs.callPackage ./build-kernel.nix {};
-        in {
-          inherit buildKernel;
+    let
+      system = "x86_64-linux";
+      pkgs = nixpkgs.legacyPackages."${system}";
+      buildKernel = pkgs.callPackage ./build-kernel.nix {};
+    in {
+      packages."${system}" = {
+        inherit buildKernel;
 
-          default = buildKernel;
-        };
-      }
-    );
+        default = buildKernel;
+      };
+
+      nixosConfigurations.perf-test-01 = nixpkgs.lib.nixosSystem {
+        inherit system;
+
+        modules = [
+          ({ config, ... }: {
+            environment.systemPackages = [
+              buildKernel
+            ];
+          })
+
+          ./modules/perf-test-01.nix
+        ];
+      };
+    };
 }
