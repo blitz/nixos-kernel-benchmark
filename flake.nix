@@ -29,6 +29,7 @@
           })
 
           ./modules/perf-test-01.nix
+          ./modules/common.nix
         ];
       };
     };
