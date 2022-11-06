@@ -43,7 +43,7 @@
       };
 
       deploy.nodes.perf-test-01 = {
-        hostname = "138.201.247.241";
+        hostname = "116.202.108.9";
 
         profiles.system = {
           sshUser = "root";
